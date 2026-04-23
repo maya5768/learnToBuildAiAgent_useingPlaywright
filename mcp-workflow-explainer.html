@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Workflow — מדריך למתחילים</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e28;
+    --border: #252a38;
+    --border2: #2e3548;
+    --text: #e8eaf0;
+    --muted: #8892a8;
+    --dim: #4a5268;
+
+    --ado: #0078d4;
+    --ado-light: #1a9aff;
+    --ado-glow: rgba(0,120,212,0.18);
+    --figma: #a259ff;
+    --figma-light: #c084fc;
+    --figma-glow: rgba(162,89,255,0.18);
+    --playwright: #2dd4bf;
+    --playwright-light: #5eead4;
+    --playwright-glow: rgba(45,212,191,0.18);
+    --excel: #217346;
+    --excel-light: #34d058;
+    --excel-glow: rgba(33,115,70,0.18);
+    --ai: #f59e0b;
+    --ai-light: #fbbf24;
+    --ai-glow: rgba(245,158,11,0.18);
+
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--ai-light);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.4;transform:scale(.7)}
+  }
+  .level-badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(245,158,11,0.12);
+    color: var(--ai-light);
+    border: 1px solid rgba(245,158,11,0.25);
+    font-weight: 500;
+  }
+
+  /* ── NAV TABS ── */
+  .nav {
+    display: flex;
+    gap: 4px;
+    padding: 16px 40px 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Heebo', sans-serif;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--ai-light);
+  }
+  .tab-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .nav-tab.active .tab-num {
+    background: var(--ai-glow);
+    color: var(--ai-light);
+  }
+
+  /* ── MAIN ── */
+  .main { padding: 32px 40px 60px; max-width: 960px; margin: 0 auto; }
+
+  /* ── PAGES ── */
+  .page { display: none; animation: fadeIn .3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── SECTION HEADING ── */
+  .section-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-icon {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .section-heading h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .section-heading p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── ANALOGY BOX ── */
+  .analogy {
+    background: var(--ai-glow);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .analogy-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .analogy-text { font-size: 13px; color: #e8c96a; line-height: 1.6; }
+  .analogy-text strong { color: var(--ai-light); }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: rgba(26,154,255,0.06);
+    border: 1px solid rgba(0,120,212,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #7ec8f5;
+    line-height: 1.6;
+  }
+  .info-box strong { color: var(--ado-light); }
+
+  /* ── TOOL CARDS ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .tool-card {
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: 1px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+  .tool-card:hover { transform: translateY(-2px); }
+  .tool-card.ado { background: var(--ado-glow); border-color: rgba(0,120,212,0.3); }
+  .tool-card.figma { background: var(--figma-glow); border-color: rgba(162,89,255,0.3); }
+  .tool-card.playwright { background: var(--playwright-glow); border-color: rgba(45,212,191,0.3); }
+  .tool-card.excel { background: var(--excel-glow); border-color: rgba(33,115,70,0.3); }
+  .tool-logo {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .tool-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .tool-card.ado .tool-name { color: var(--ado-light); }
+  .tool-card.figma .tool-name { color: var(--figma-light); }
+  .tool-card.playwright .tool-name { color: var(--playwright-light); }
+  .tool-card.excel .tool-name { color: var(--excel-light); }
+  .tool-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 24px 0;
+    position: relative;
+  }
+  .flow-step {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .flow-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .flow-circle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .flow-line {
+    width: 2px;
+    flex: 1;
+    min-height: 20px;
+    background: var(--border2);
+    margin: 2px 0;
+  }
+  .flow-content {
+    flex: 1;
+    padding: 0 0 24px;
+  }
+  .flow-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+  .flow-card:hover { border-color: var(--border2); }
+  .flow-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .flow-card-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .flow-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-right: auto;
+  }
+  .flow-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* step colors */
+  .step-ado .flow-circle { background: var(--ado-glow); color: var(--ado-light); border: 2px solid rgba(0,120,212,0.4); }
+  .step-ado .flow-card { border-right: 3px solid var(--ado); }
+  .step-ado .flow-card-title { color: var(--ado-light); }
+  .step-ado .flow-tag { background: var(--ado-glow); color: var(--ado-light); }
+
+  .step-figma .flow-circle { background: var(--figma-glow); color: var(--figma-light); border: 2px solid rgba(162,89,255,0.4); }
+  .step-figma .flow-card { border-right: 3px solid var(--figma); }
+  .step-figma .flow-card-title { color: var(--figma-light); }
+  .step-figma .flow-tag { background: var(--figma-glow); color: var(--figma-light); }
+
+  .step-ai .flow-circle { background: var(--ai-glow); color: var(--ai-light); border: 2px solid rgba(245,158,11,0.4); }
+  .step-ai .flow-card { border-right: 3px solid var(--ai); }
+  .step-ai .flow-card-title { color: var(--ai-light); }
+  .step-ai .flow-tag { background: var(--ai-glow); color: var(--ai-light); }
+
+  .step-excel .flow-circle { background: var(--excel-glow); color: var(--excel-light); border: 2px solid rgba(33,115,70,0.4); }
+  .step-excel .flow-card { border-right: 3px solid var(--excel); }
+  .step-excel .flow-card-title { color: var(--excel-light); }
+  .step-excel .flow-tag { background: var(--excel-glow); color: var(--excel-light); }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin: 14px 0;
+    position: relative;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #abb2bf;
+    direction: ltr;
+    text-align: left;
+  }
+  .code-label {
+    font-size: 11px;
+    color: var(--dim);
+    font-family: 'Fira Code', monospace;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    direction: ltr;
+  }
+  .code-label::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #4a5268;
+  }
+  .kw { color: #c678dd; }
+  .str { color: #98c379; }
+  .key { color: #e06c75; }
+  .cmt { color: #5c6370; font-style: italic; }
+  .num { color: #d19a66; }
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Heebo', sans-serif;
+    transition: all 0.2s;
+    direction: rtl;
+  }
+  .copy-btn:hover { background: var(--border); color: var(--text); }
+  .copy-btn.copied { color: var(--excel-light); border-color: rgba(33,115,70,0.4); }
+
+  /* ── PROMPT BOX ── */
+  .prompt-box {
+    background: #090b10;
+    border: 1px solid rgba(245,158,11,0.2);
+    border-right: 3px solid var(--ai);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin: 12px 0;
+    direction: rtl;
+  }
+  .prompt-label {
+    font-size: 10px;
+    color: var(--ai);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .prompt-text {
+    font-size: 13px;
+    color: #e8d5a0;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-box {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .quiz-q-icon { font-size: 18px; flex-shrink: 0; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    text-align: right;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .quiz-opt:hover { background: var(--border); }
+  .quiz-opt.correct { background: rgba(52,208,88,0.1); border-color: rgba(52,208,88,0.4); color: #5bde7a; }
+  .quiz-opt.wrong { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); color: #f87171; }
+  .quiz-feedback {
+    margin-top: 12px;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    display: none;
+    line-height: 1.5;
+  }
+  .quiz-feedback.ok { background: rgba(52,208,88,0.08); color: #5bde7a; display: block; }
+  .quiz-feedback.no { background: rgba(239,68,68,0.08); color: #f87171; display: block; }
+
+  /* ── GLOSSARY ── */
+  .glossary-item {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+  }
+  .glossary-item:last-child { border-bottom: none; }
+  .glossary-term {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ai-light);
+    margin-bottom: 4px;
+  }
+  .glossary-def {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── NEXT BTN ── */
+  .next-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.08));
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: var(--radius-sm);
+    color: var(--ai-light);
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+  }
+  .next-btn:hover { background: rgba(245,158,11,0.2); transform: translateX(-2px); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--surface2);
+    color: var(--muted);
+    font-weight: 600;
+    padding: 10px 16px;
+    text-align: right;
+    border-bottom: 1px solid var(--border2);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .tag-ado { background: var(--ado-glow); color: var(--ado-light); }
+  .tag-figma { background: var(--figma-glow); color: var(--figma-light); }
+  .tag-pw { background: var(--playwright-glow); color: var(--playwright-light); }
+  .tag-excel { background: var(--excel-glow); color: var(--excel-light); }
+  .tag-ai { background: var(--ai-glow); color: var(--ai-light); }
+
+  /* ── SUMMARY CHIP ── */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 40px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .progress-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ai), var(--ado-light));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 14%;
+  }
+
+  @media (max-width: 640px) {
+    .main { padding: 20px 16px 40px; }
+    .header { padding: 16px 20px; }
+    .nav { padding: 12px 16px 0; }
+    .tools-grid { grid-template-columns: 1fr; }
+    .progress-row { padding: 10px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <div class="dot"></div>
+    MCP Workflow — מדריך מלא
+  </div>
+  <span class="level-badge">🟢 מתחילים בתכנות</span>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-row">
+  <span id="progress-label">שלב 1 מתוך 7</span>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <span id="progress-pct">14%</span>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav">
+  <button class="nav-tab active" onclick="showPage(0,this)">
+    <span class="tab-num">1</span> מה זה MCP?
+  </button>
+  <button class="nav-tab" onclick="showPage(1,this)">
+    <span class="tab-num">2</span> הכלים
+  </button>
+  <button class="nav-tab" onclick="showPage(2,this)">
+    <span class="tab-num">3</span> השרשרת
+  </button>
+  <button class="nav-tab" onclick="showPage(3,this)">
+    <span class="tab-num">4</span> הגדרה טכנית
+  </button>
+  <button class="nav-tab" onclick="showPage(4,this)">
+    <span class="tab-num">5</span> פרומפטים
+  </button>
+  <button class="nav-tab" onclick="showPage(5,this)">
+    <span class="tab-num">6</span> הגבלות
+  </button>
+  <button class="nav-tab" onclick="showPage(6,this)">
+    <span class="tab-num">7</span> מילון מונחים
+  </button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- PAGE 1: MCP EXPLANATION -->
+  <div class="page active" id="page-0">
+    <div class="section-heading">
+      <div class="section-icon" style="background:var(--ai-glow)">🔌</div>
+      <div>
+        <h2>מה זה MCP? (Model Context Protocol)</h2>
+        <p>הסבר בגובה העיניים, בלי מונחים מסובכים</p>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-icon">💡</div>
+      <div class="analogy-text">
+        <strong>דמיינו תרגום לחיים:</strong>
+        אתה עובד בחברה ויש לך עוזר (ה-AI). העוזר חכם מאוד, אבל הוא יושב בחדר אחר
+        ולא יכול לגשת לשום מחשב. MCP הוא כמו <strong>טלפון שמחבר את העוזר לכל המערכות</strong>
+        — הוא יכול עכשיו להסתכל על Azure DevOps, לפתוח Figma, להריץ בדיקות, ולכתוב Excel —
+        הכל בלי שאתה צריך לדלג בין כלים.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 הגדרה פשוטה</div>
+      <p>
+        MCP הוא <strong>פרוטוקול</strong> (=סט של חוקים) שמאפשר לכלי AI כמו Claude
+        לדבר עם תוכנות חיצוניות. במקום שה-AI ידע רק מה הוא למד באימון —
+        הוא יכול לשאול בזמן אמת: "מה יש בכרטיס הזה ב-Azure DevOps?" או "מה העיצוב ב-Figma?"
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🤔 למה זה חשוב לנו?</div>
+      <p>
+        בלי MCP: אתה פותח Azure DevOps, מעתיק ידנית את הדרישות, פותח Figma,
+        מסתכל על העיצוב, חוזר, כותב Test Plan ב-Excel — שעה של עבודה.<br><br>
+        <strong>עם MCP:</strong> אתה כותב פרומפט אחד ל-AI, והוא עושה את כל זה אוטומטית.
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-icon">🏗️</div>
+      <div class="analogy-text">
+        <strong>אנלוגיית קוד:</strong>
+        MCP הוא כמו <strong>USB Port</strong> של המחשב — הוא תקן אחיד שמאפשר לכל
+        מכשיר (Azure DevOps, Figma, Playwright) להתחבר לאותו AI. בלי תקן כזה,
+        כל כלי היה צריך שפה משלו.
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>📅 עובדה:</strong> MCP פותח על ידי Anthropic (יוצרי Claude) ב-2024
+      ומהר מאוד הפך לסטנדרט בתעשייה. כיום יש מעל 10,000 MCP Servers.
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-q">
+        <span class="quiz-q-icon">❓</span>
+        בחן את עצמך: מה מאפשר MCP לעשות?
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'לא בדיוק — AI יודע הרבה גם בלי MCP מהאימון שלו')">
+          ללמד AI דברים חדשים שהוא לא ידע
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, true, '✅ נכון! MCP הוא הגשר בין AI לכלים חיצוניים בזמן אמת')">
+          לחבר AI לכלים חיצוניים כמו Azure DevOps ו-Figma בזמן אמת
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'לא — MCP לא גורם ל-AI לעבוד מהר יותר')">
+          לגרום ל-AI לעבד מידע מהר יותר
+        </button>
+      </div>
+      <div class="quiz-feedback" id="qf-0"></div>
+    </div>
+
+    <button class="next-btn" onclick="showPage(1, document.querySelectorAll('.nav-tab')[1])">
+      הבא: הכלים שמשתתפים ←
+    </button>
+  </div>
+
+  <!-- PAGE 2: THE TOOLS -->
+  <div class="page" id="page-1">
+    <div class="section-heading">
+      <div class="section-icon" style="background:rgba(162,89,255,0.15)">🧰</div>
+      <div>
+        <h2>ארבעת הכלים בשרשרת</h2>
+        <p>כל כלי עושה דבר אחד שהוא הכי טוב בו</p>
+      </div>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card ado">
+        <div class="tool-logo">📋</div>
+        <div class="tool-name">Azure DevOps</div>
+        <div class="tool-desc">
+          מערכת ניהול פרויקטים של Microsoft. כאן מנהלים משימות (Work Items),
+          כרטיסים, Sprint, ובדיקות. מקבילה ל-Jira.
+        </div>
+      </div>
+      <div class="tool-card figma">
+        <div class="tool-logo">🎨</div>
+        <div class="tool-name">Figma</div>
+        <div class="tool-desc">
+          כלי עיצוב בדפדפן. מעצבים מציירים בו מסכים, פלואים וקומפוננטות.
+          ממנו מקבלים את ה"איך הדבר צריך להיראות".
+        </div>
+      </div>
+      <div class="tool-card playwright">
+        <div class="tool-logo">🎭</div>
+        <div class="tool-name">Playwright</div>
+        <div class="tool-desc">
+          כלי של Microsoft לאוטומציית דפדפן. מריץ בדיקות UI אוטומטיות —
+          כמו רובוט שלוחץ על הכפתורים במקומך.
+        </div>
+      </div>
+      <div class="tool-card excel">
+        <div class="tool-logo">📊</div>
+        <div class="tool-name">Excel (.xlsx)</div>
+        <div class="tool-desc">
+          הפלט הסופי — קובץ Test Plan מסודר עם עמודות: ID, כותרת,
+          שלבי בדיקה, תוצאה מצופה. ניתן לייבא חזרה ל-ADO.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-heading" style="margin-top:0">
+      <div class="section-icon" style="background:var(--ai-glow)">🤖</div>
+      <div>
+        <h2>ה-AI — המנצח על התזמורת</h2>
+        <p>Claude (או GitHub Copilot) מחבר את כולם</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p>
+        ה-AI לא <em>מחליף</em> את הכלים — הוא <strong>מתאם</strong> ביניהם.
+        הוא קורא מ-ADO, מפרש את Figma, ומייצר תוכן Test Plan, ואז כותב Excel.
+        בלי MCP הוא לא יכול לגשת לשום דבר מאלה.
+      </p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>כלי</th>
+            <th>MCP Server</th>
+            <th>מה ה-AI יכול לעשות איתו</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-ado">Azure DevOps</span></td>
+            <td style="font-family:monospace;font-size:12px;color:#7ec8f5">@azure-devops/mcp</td>
+            <td>קרוא Work Items, צור Test Plans, עדכן כרטיסים</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-figma">Figma</span></td>
+            <td style="font-family:monospace;font-size:12px;color:#c4a0ff">Figma Dev Mode MCP</td>
+            <td>קרוא קומפוננטות, מסכים, flows, spacing tokens</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-pw">Playwright</span></td>
+            <td style="font-family:monospace;font-size:12px;color:#5eead4">@playwright/mcp</td>
+            <td>הרץ בדיקות דפדפן, צלם screenshots, ולידציה</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-excel">Excel</span></td>
+            <td style="color:var(--muted);font-size:12px">קוד Python/JS (אין MCP)</td>
+            <td>צור קובץ .xlsx עם Test Cases מסודרים</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-q">
+        <span class="quiz-q-icon">❓</span>
+        מה תפקיד Playwright בשרשרת?
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="checkQuiz(this,false,'לא — עיצוב מגיע מ-Figma')">לצייר את ממשק המשתמש</button>
+        <button class="quiz-opt" onclick="checkQuiz(this,true,'✅ נכון! Playwright הוא רובוט שבודק את האפליקציה בדפדפן אוטומטית')">להריץ בדיקות UI אוטומטיות בדפדפן</button>
+        <button class="quiz-opt" onclick="checkQuiz(this,false,'לא — ניהול כרטיסים הוא תפקיד Azure DevOps')">לנהל כרטיסי משימות</button>
+      </div>
+      <div class="quiz-feedback" id="qf-1"></div>
+    </div>
+
+    <button class="next-btn" onclick="showPage(2, document.querySelectorAll('.nav-tab')[2])">
+      הבא: שרשרת הפעולות ←
+    </button>
+  </div>
+
+  <!-- PAGE 3: THE FLOW -->
+  <div class="page" id="page-2">
+    <div class="section-heading">
+      <div class="section-icon" style="background:rgba(45,212,191,0.12)">⛓️</div>
+      <div>
+        <h2>שרשרת הפעולות — צעד אחרי צעד</h2>
+        <p>מכרטיס ADO ועד קובץ Excel בסוף</p>
+      </div>
+    </div>
+
+    <div class="flow">
+
+      <!-- STEP 1 -->
+      <div class="flow-step step-ado">
+        <div class="flow-left">
+          <div class="flow-circle">1</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-card">
+            <div class="flow-card-header">
+              <span>📋</span>
+              <span class="flow-card-title">קריאת Work Item מ-Azure DevOps</span>
+              <span class="flow-tag">ADO MCP</span>
+            </div>
+            <p>
+              ה-AI מתחבר דרך MCP לאורגניזציה שלך ב-ADO ומושך את <strong>כרטיס המשימה</strong>.
+              הכרטיס מכיל: תיאור הפיצ'ר, Acceptance Criteria, Priority, ו-Story Points.
+              <br><br>
+              <em>דוגמה: Work Item #1234 — "כפתור Login חדש עם אימות Google"</em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="flow-step step-figma">
+        <div class="flow-left">
+          <div class="flow-circle">2</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-card">
+            <div class="flow-card-header">
+              <span>🎨</span>
+              <span class="flow-card-title">קריאת עיצוב מ-Figma</span>
+              <span class="flow-tag">Figma MCP</span>
+            </div>
+            <p>
+              ה-AI ניגש לקובץ Figma הרלוונטי ומחלץ: <strong>מסכים, flow של המשתמש,
+              מצבים שונים</strong> (empty state, error state, success) ו-interactions.
+              <br><br>
+              <em>דוגמה: מוצא 3 מסכים — דף Login, דף Error, דף Success עם כפתור Google</em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="flow-step step-ai">
+        <div class="flow-left">
+          <div class="flow-circle">3</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-card">
+            <div class="flow-card-header">
+              <span>🤖</span>
+              <span class="flow-card-title">יצירת Test Cases על ידי ה-AI</span>
+              <span class="flow-tag">AI (Claude / Copilot)</span>
+            </div>
+            <p>
+              ה-AI משלב את המידע מ-ADO ומ-Figma ויוצר <strong>Test Cases מפורטים</strong>.
+              כל Test Case כולל: שם הבדיקה, תנאי התחלה, שלבי הבדיקה, תוצאה מצופה.
+              <br><br>
+              <em>דוגמה: "TC01 — לחיצה על כפתור Google → מופיע popup → אישור → redirect לדף הבית"</em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 (optional playwright) -->
+      <div class="flow-step step-playwright" style="--pw-c:var(--playwright)">
+        <div class="flow-left">
+          <div class="flow-circle" style="background:var(--playwright-glow);color:var(--playwright-light);border:2px solid rgba(45,212,191,0.4)">4</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-card" style="border-right:3px solid var(--playwright)">
+            <div class="flow-card-header">
+              <span>🎭</span>
+              <span class="flow-card-title">ולידציה עם Playwright <em style="font-size:11px;font-weight:400;color:var(--dim)">(אופציונלי)</em></span>
+              <span class="flow-tag" style="background:var(--playwright-glow);color:var(--playwright-light)">Playwright MCP</span>
+            </div>
+            <p>
+              שלב אופציונלי — Playwright פותח דפדפן ובודק שהאפליקציה <em>באמת</em>
+              עובדת. הוא יכול לצלם screenshots ולהשוות לעיצוב מ-Figma.
+              ה-AI אחר כך מתאים את ה-Test Cases לפי מה שמצא.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="flow-step step-excel">
+        <div class="flow-left">
+          <div class="flow-circle">5</div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-card">
+            <div class="flow-card-header">
+              <span>📊</span>
+              <span class="flow-card-title">ייצוא ל-Excel (.xlsx)</span>
+              <span class="flow-tag">פלט סופי</span>
+            </div>
+            <p>
+              ה-AI מייצר קובץ Excel מסודר עם כל ה-Test Cases.
+              העמודות תואמות לפורמט שניתן <strong>לייבא חזרה ל-Azure Test Plans</strong>.
+              <br><br>
+              <em>עמודות: TC ID | כותרת | תיאור | Pre-conditions | שלבים | תוצאה מצופה | Priority</em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /flow -->
+
+    <div class="analogy">
+      <div class="analogy-icon">⚡</div>
+      <div class="analogy-text">
+        <strong>כמה זמן חוסכים?</strong> תהליך ידני לוקח 2-4 שעות. עם ה-workflow הזה — <strong>כ-10-15 דקות</strong>.
+        ה-AI מייצר Draft, ואתה רק מוודא ועורך.
+      </div>
+    </div>
+
+    <button class="next-btn" onclick="showPage(3, document.querySelectorAll('.nav-tab')[3])">
+      הבא: ההגדרה הטכנית ←
+    </button>
+  </div>
+
+  <!-- PAGE 4: TECHNICAL SETUP -->
+  <div class="page" id="page-3">
+    <div class="section-heading">
+      <div class="section-icon" style="background:rgba(0,120,212,0.12)">⚙️</div>
+      <div>
+        <h2>ההגדרה הטכנית — איך מחברים הכל</h2>
+        <p>קוד אמיתי, מוסבר שורה-שורה</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📁 שלב 1 — יצירת קובץ mcp.json</div>
+      <p>
+        זה הקובץ שאומר ל-AI אילו כלים הוא יכול להשתמש בהם.
+        יוצרים אותו בתיקיית <code style="background:#1a1e28;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px">.vscode</code> בפרויקט.
+      </p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">📄 .vscode/mcp.json</div>
+      <button class="copy-btn" onclick="copyCode(this, 'code1')">העתק</button>
+      <pre id="code1">{
+  <span class="key">"inputs"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"ado_org"</span>,          <span class="cmt">// שם הארגון ב-Azure DevOps</span>
+      <span class="key">"type"</span>: <span class="str">"promptString"</span>,    <span class="cmt">// ישאל אותך כשתפעיל</span>
+      <span class="key">"description"</span>: <span class="str">"שם הארגון ב-ADO (לדוגמה: contoso)"</span>
+    }
+  ],
+  <span class="key">"servers"</span>: {
+
+    <span class="cmt">// ── שרת Azure DevOps ──</span>
+    <span class="key">"ado"</span>: {
+      <span class="key">"type"</span>: <span class="str">"stdio"</span>,
+      <span class="key">"command"</span>: <span class="str">"npx"</span>,
+      <span class="key">"args"</span>: [
+        <span class="str">"-y"</span>,
+        <span class="str">"@azure-devops/mcp"</span>,  <span class="cmt">// חבילת ה-MCP</span>
+        <span class="str">"${input:ado_org}"</span>,   <span class="cmt">// שם הארגון שהזנת</span>
+        <span class="str">"-d"</span>,
+        <span class="str">"core"</span>,              <span class="cmt">// domain: מידע בסיסי</span>
+        <span class="str">"work-items"</span>,        <span class="cmt">// domain: כרטיסי עבודה</span>
+        <span class="str">"test-plans"</span>         <span class="cmt">// domain: תכניות בדיקה</span>
+      ]
+    },
+
+    <span class="cmt">// ── שרת Playwright ──</span>
+    <span class="key">"playwright"</span>: {
+      <span class="key">"type"</span>: <span class="str">"stdio"</span>,
+      <span class="key">"command"</span>: <span class="str">"npx"</span>,
+      <span class="key">"args"</span>: [
+        <span class="str">"@playwright/mcp@latest"</span>  <span class="cmt">// Playwright MCP</span>
+      ]
+    }
+
+    <span class="cmt">// Figma: מופעל מתוך אפליקציית Figma Desktop</span>
+    <span class="cmt">// Settings → Enable Dev Mode MCP Server</span>
+  }
+}</pre>
+    </div>
+
+    <div class="info-box">
+      <strong>💡 מה זה npx?</strong> זה כלי של Node.js שמוריד ומריץ חבילות JavaScript
+      בלי שצריך להתקין אותן מראש. כמו "הורד והפעל עכשיו".
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔑 שלב 2 — אימות (Authentication)</div>
+      <p>
+        Azure DevOps דורש <strong>Personal Access Token (PAT)</strong> — סוג של סיסמה מיוחדת.
+        יוצרים אותה ב-ADO תחת User Settings → Personal Access Tokens.
+        את הטוקן שמים במשתנה סביבה:
+      </p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">💻 Terminal (Windows PowerShell)</div>
+      <button class="copy-btn" onclick="copyCode(this, 'code2')">העתק</button>
+      <pre id="code2"><span class="cmt"># מגדירים את הטוקן כמשתנה סביבה</span>
+<span class="kw">$env</span>:AZURE_DEVOPS_EXT_PAT = <span class="str">"הטוקן-שלך-כאן"</span>
+
+<span class="cmt"># או ב-Mac/Linux:</span>
+<span class="kw">export</span> AZURE_DEVOPS_EXT_PAT=<span class="str">"הטוקן-שלך-כאן"</span></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🐍 שלב 3 — קוד Python ליצירת Excel</div>
+      <p>
+        האחרון בשרשרת — מקבלים את ה-Test Cases שה-AI יצר וכותבים לקובץ Excel.
+        משתמשים בספריית <code style="background:#1a1e28;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px">openpyxl</code>:
+      </p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">🐍 generate_test_plan.py</div>
+      <button class="copy-btn" onclick="copyCode(this, 'code3')">העתק</button>
+      <pre id="code3"><span class="kw">import</span> openpyxl
+<span class="kw">from</span> openpyxl.styles <span class="kw">import</span> Font, PatternFill, Alignment
+
+<span class="cmt"># יצירת קובץ Excel חדש</span>
+wb = openpyxl.Workbook()
+ws = wb.active
+ws.title = <span class="str">"Test Plan"</span>
+
+<span class="cmt"># הגדרת כותרות העמודות</span>
+headers = [
+    <span class="str">"TC ID"</span>,        <span class="cmt"># מספר הבדיקה</span>
+    <span class="str">"כותרת"</span>,        <span class="cmt"># שם הבדיקה</span>
+    <span class="str">"Pre-condition"</span>, <span class="cmt"># תנאי התחלה</span>
+    <span class="str">"שלבים"</span>,        <span class="cmt"># מה עושים</span>
+    <span class="str">"תוצאה מצופה"</span>,  <span class="cmt"># מה אמור לקרות</span>
+    <span class="str">"Priority"</span>       <span class="cmt"># דחיפות</span>
+]
+
+<span class="cmt"># כתיבת הכותרות עם עיצוב</span>
+<span class="kw">for</span> col, header <span class="kw">in</span> enumerate(headers, <span class="num">1</span>):
+    cell = ws.cell(row=<span class="num">1</span>, column=col, value=header)
+    cell.font = Font(bold=<span class="kw">True</span>, color=<span class="str">"FFFFFF"</span>)
+    cell.fill = PatternFill(<span class="str">"solid"</span>, fgColor=<span class="str">"0078D4"</span>)  <span class="cmt"># כחול ADO</span>
+
+<span class="cmt"># דוגמה: הוספת Test Case</span>
+test_cases = [
+    [<span class="str">"TC001"</span>, <span class="str">"כניסה עם Google"</span>, <span class="str">"משתמש לא מחובר"</span>,
+     <span class="str">"1. לחץ Login\n2. בחר Google\n3. אשר הרשאות"</span>,
+     <span class="str">"redirect לדף הבית עם שם המשתמש"</span>, <span class="str">"High"</span>],
+]
+
+<span class="kw">for</span> row_idx, tc <span class="kw">in</span> enumerate(test_cases, <span class="num">2</span>):
+    <span class="kw">for</span> col_idx, value <span class="kw">in</span> enumerate(tc, <span class="num">1</span>):
+        ws.cell(row=row_idx, column=col_idx, value=value)
+
+wb.save(<span class="str">"test_plan.xlsx"</span>)
+<span class="kw">print</span>(<span class="str">"✅ קובץ Excel נוצר בהצלחה!"</span>)</pre>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-icon">📦</div>
+      <div class="analogy-text">
+        <strong>להתקין את הדרוש:</strong>
+        כדי להריץ את הקוד, צריך Python ואת הספרייה:
+        <code style="background:rgba(0,0,0,0.3);padding:2px 8px;border-radius:4px;font-family:monospace">pip install openpyxl</code>
+      </div>
+    </div>
+
+    <button class="next-btn" onclick="showPage(4, document.querySelectorAll('.nav-tab')[4])">
+      הבא: פרומפטים לדוגמה ←
+    </button>
+  </div>
+
+  <!-- PAGE 5: PROMPTS -->
+  <div class="page" id="page-4">
+    <div class="section-heading">
+      <div class="section-icon" style="background:var(--ai-glow)">💬</div>
+      <div>
+        <h2>פרומפטים — מה כותבים ל-AI</h2>
+        <p>פרומפטים מוכנים לשימוש לכל שלב בתהליך</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:8px">
+      <div class="card-title">🔵 שלב 1 — שליפת Work Item מ-ADO</div>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-label">🤖 PROMPT לבדיקה</div>
+      <div class="prompt-text">
+        קרא את Work Item מספר 1234 מ-Azure DevOps ותחלץ ממנו:<br>
+        1. כותרת המשימה<br>
+        2. תיאור מפורט<br>
+        3. Acceptance Criteria (קריטריוני קבלה)<br>
+        4. Priority<br>
+        סכם בפורמט נקי שנוכל להשתמש בו ליצירת Test Plan.
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;margin-top:16px">
+      <div class="card-title">🟣 שלב 2 — ניתוח Figma</div>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-label">🤖 PROMPT לעיצוב</div>
+      <div class="prompt-text">
+        היכנס לקובץ Figma עם ID: [FIGMA_FILE_ID] ומצא את ה-Frame בשם "Login Flow".<br>
+        חלץ:<br>
+        1. רשימת המסכים / מצבים (states) שקיימים<br>
+        2. User Flow — מה קורה כשלוחצים על כל כפתור<br>
+        3. הודעות שגיאה שמוצגות<br>
+        4. מצבי קצה (edge cases) שרואים בעיצוב
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;margin-top:16px">
+      <div class="card-title">🟡 שלב 3 — יצירת Test Cases</div>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-label">🤖 PROMPT ליצירה</div>
+      <div class="prompt-text">
+        בהתבסס על:<br>
+        - Work Item: [כותרת + Acceptance Criteria שחולצו בשלב 1]<br>
+        - עיצוב Figma: [רשימת מסכים ו-flows מהשלב 2]<br><br>
+        צור Test Plan מקיף הכולל:<br>
+        - בדיקות Happy Path (המסלול הרגיל שעובד)<br>
+        - בדיקות Negative (מה קורה כשמשהו לא תקין)<br>
+        - בדיקות Edge Cases (מקרי קצה)<br><br>
+        פורמט כל Test Case: TC_ID | כותרת | Pre-condition | שלבים | תוצאה מצופה | Priority
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;margin-top:16px">
+      <div class="card-title">🟢 שלב 4 — ייצוא ל-Excel</div>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-label">🤖 PROMPT לייצוא</div>
+      <div class="prompt-text">
+        קח את ה-Test Cases שיצרת וכתוב קוד Python שמייצר קובץ Excel (test_plan.xlsx) עם:<br>
+        - שורת כותרות מעוצבת בצבע כחול<br>
+        - כל Test Case בשורה נפרדת<br>
+        - עמודות: TC_ID, Title, Pre-conditions, Steps, Expected Result, Priority<br>
+        - הפורמט תואם לייבוא ל-Azure DevOps Test Plans
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-title">🎭 שלב אופציונלי — Playwright</div>
+      <p>
+        אפשר להוסיף ולידציה אוטומטית לפני יצירת ה-Excel:
+      </p>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-label">🤖 PROMPT לולידציה</div>
+      <div class="prompt-text">
+        השתמש ב-Playwright כדי לפתוח את [URL האפליקציה] ולבדוק:<br>
+        1. האם כפתור "Login עם Google" קיים בדף?<br>
+        2. צלם screenshot של הדף הנוכחי<br>
+        3. לחץ על הכפתור — האם מופיע popup אימות?<br>
+        עדכן את ה-Test Cases בהתאם למה שמצאת.
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:16px">
+      <strong>💡 טיפ:</strong> אפשר לשרשר את כל הפרומפטים לפרומפט אחד ארוך ולתת ל-AI
+      לעשות את כל השלבים בזה אחר זה. ה-AI יתחבר לכלים הנדרשים לפי הסדר.
+    </div>
+
+    <button class="next-btn" onclick="showPage(5, document.querySelectorAll('.nav-tab')[5])">
+      הבא: הגבלות ודברים שכדאי לדעת ←
+    </button>
+  </div>
+
+  <!-- PAGE 6: LIMITATIONS -->
+  <div class="page" id="page-5">
+    <div class="section-heading">
+      <div class="section-icon" style="background:rgba(239,68,68,0.12)">⚠️</div>
+      <div>
+        <h2>הגבלות ודברים שכדאי לדעת</h2>
+        <p>לפני שמתחילים — הכירו את המציאות</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>נושא</th>
+            <th>הגבלה</th>
+            <th>פתרון / עקיפה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-figma">Figma MCP</span></td>
+            <td style="color:#f87171">
+              Rate Limits אגרסיביים:<br>
+              Starter: 6 קריאות/חודש<br>
+              Org: 200/יום
+            </td>
+            <td>השתמש ב-Figma REST API עם Personal Access Token — לימיטים נדיבים יותר</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-ado">ADO MCP</span></td>
+            <td style="color:#f87171">
+              לא תומך ב-ADO On-Premise<br>
+              (רק ADO Cloud)
+            </td>
+            <td>לon-premise: השתמש ישירות ב-REST API של Azure DevOps</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-ado">ADO Free Plan</span></td>
+            <td style="color:#f87171">
+              Free plan מגביל הרשאות<br>
+              לחלק מה-API calls
+            </td>
+            <td>דרוש לפחות Basic license ל-ADO</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-figma">Figma Desktop</span></td>
+            <td style="color:#f87171">
+              Figma MCP דורש את<br>
+              אפליקציית Desktop — לא דפדפן
+            </td>
+            <td>הורד Figma Desktop ואפשר Dev Mode MCP Server בהגדרות</td>
+          </tr>
+          <tr>
+            <td style="color:#e8c96a">🤖 AI</td>
+            <td style="color:#f87171">
+              AI יכול לטעות ב-Test Cases<br>
+              — חובה לסקור ידנית
+            </td>
+            <td>תמיד ראה את הפלט כ-Draft. QA Engineer צריך לאשר לפני שימוש</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-excel">Excel</span></td>
+            <td style="color:#f87171">
+              אין MCP ישיר ל-Excel<br>
+              כרגע
+            </td>
+            <td>כתיבת קוד Python/JS ליצירת קובץ, או שימוש ב-Claude for Excel</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-title">✅ תנאי מוקדמים — לפני שמתחילים</div>
+      <p style="margin-bottom:12px">וודאו שיש לכם את כל אלה:</p>
+      <div class="chips">
+        <span class="chip" style="background:rgba(0,120,212,0.1);color:var(--ado-light);border-color:rgba(0,120,212,0.3)">
+          ✓ חשבון Azure DevOps (Basic+)
+        </span>
+        <span class="chip" style="background:rgba(162,89,255,0.1);color:var(--figma-light);border-color:rgba(162,89,255,0.3)">
+          ✓ Figma Desktop מותקן
+        </span>
+        <span class="chip" style="background:rgba(45,212,191,0.1);color:var(--playwright-light);border-color:rgba(45,212,191,0.3)">
+          ✓ Node.js מותקן
+        </span>
+        <span class="chip" style="background:rgba(245,158,11,0.1);color:var(--ai-light);border-color:rgba(245,158,11,0.3)">
+          ✓ Python + openpyxl
+        </span>
+        <span class="chip" style="background:rgba(0,120,212,0.1);color:var(--ado-light);border-color:rgba(0,120,212,0.3)">
+          ✓ ADO Personal Access Token
+        </span>
+        <span class="chip" style="background:rgba(162,89,255,0.1);color:var(--figma-light);border-color:rgba(162,89,255,0.3)">
+          ✓ Figma API Token
+        </span>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-icon">🎯</div>
+      <div class="analogy-text">
+        <strong>המלצה לתחילת דרך:</strong> התחל רק עם ADO MCP בלי Figma ו-Playwright.
+        כתוב פרומפט שמשלב Work Item ויוצר Test Cases ידנית.
+        <strong>כל שלב שמוסיפים מגדיל את הסיכוי לתקלות.</strong>
+      </div>
+    </div>
+
+    <button class="next-btn" onclick="showPage(6, document.querySelectorAll('.nav-tab')[6])">
+      הבא: מילון מונחים ←
+    </button>
+  </div>
+
+  <!-- PAGE 7: GLOSSARY -->
+  <div class="page" id="page-6">
+    <div class="section-heading">
+      <div class="section-icon" style="background:rgba(245,158,11,0.12)">📖</div>
+      <div>
+        <h2>מילון מונחים</h2>
+        <p>כל המונחים הטכניים מוסברים בפשטות</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="glossary-item">
+        <div class="glossary-term">MCP — Model Context Protocol</div>
+        <div class="glossary-def">פרוטוקול תקשורת בין AI לכלים חיצוניים. כמו שפה משותפת שמאפשרת ל-AI לדבר עם Azure DevOps, Figma ועוד.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">MCP Server</div>
+        <div class="glossary-def">תוכנה קטנה שרצה על המחשב שלך ומתווכת בין ה-AI לשירות ספציפי (לדוגמה: @azure-devops/mcp הוא MCP Server ל-Azure DevOps).</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Work Item</div>
+        <div class="glossary-def">כרטיס משימה ב-Azure DevOps. יכול להיות User Story, Bug, Task, Feature. מכיל תיאור, דרישות ו-Acceptance Criteria.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Acceptance Criteria</div>
+        <div class="glossary-def">רשימת תנאים שצריכים להתקיים כדי שהפיצ'ר ייחשב "גמור". לדוגמה: "כשלוחצים Login עם Google, המשתמש מגיע לדף הבית תוך 3 שניות".</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Test Plan</div>
+        <div class="glossary-def">מסמך שמפרט אילו בדיקות יש לבצע על פיצ'ר. מכיל Test Cases — כל אחד עם שם, שלבים ותוצאה מצופה.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Test Case</div>
+        <div class="glossary-def">בדיקה ספציפית אחת. לדוגמה: "TC001 — בדיקת כניסה עם Google — לחץ כפתור → בחר חשבון → ציפיה: redirect לדף הבית".</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Happy Path</div>
+        <div class="glossary-def">המסלול הרגיל שעובד כמצופה. הבדיקה שמכסה מה קורה כשהמשתמש עושה הכל נכון.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Edge Case</div>
+        <div class="glossary-def">מקרה קיצוני שקורה לעיתים נדירות. לדוגמה: מה קורה אם המשתמש מזין סיסמה של 1000 תווים?</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">PAT — Personal Access Token</div>
+        <div class="glossary-def">סיסמה מיוחדת שנוצרת עבור API. בניגוד לסיסמה רגילה, ניתן להגביל אותה להרשאות ספציפיות ולתקופת זמן.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">stdio</div>
+        <div class="glossary-def">שיטת תקשורת בין תוכנות דרך "קלט/פלט סטנדרטי". ה-MCP Server מקבל פקודות ומחזיר תשובות בצינור תקשורת זה.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Domain (ב-ADO MCP)</div>
+        <div class="glossary-def">קבוצת כלים קשורים. לדוגמה, domain "work-items" כולל כלים לקריאה/כתיבה של כרטיסים. מגדירים אילו domains לטעון כדי לא לטעון יותר מדי.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">npx</div>
+        <div class="glossary-def">כלי ב-Node.js שמוריד ומריץ חבילות JavaScript מהאינטרנט ללא התקנה מראש. כמו "הורד והפעל עכשיו".</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="analogy" style="margin-top:0">
+      <div class="analogy-icon">🎉</div>
+      <div class="analogy-text">
+        <strong>סיימת את המדריך!</strong> עכשיו אתה מבין את כל השרשרת —
+        מכרטיס ADO, דרך Figma, יצירת Test Cases ב-AI, ועד קובץ Excel מוכן לייבוא.
+        <br><br>
+        <strong>הצעד הבא:</strong> נסה לחבר רק את ADO MCP תחילה עם פרויקט בדיקה קטן.
+        בהצלחה! 🚀
+      </div>
+    </div>
+
+  </div><!-- /page-6 -->
+
+</div><!-- /main -->
+
+<script>
+const pages = document.querySelectorAll('.page');
+const tabs = document.querySelectorAll('.nav-tab');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const progressPct = document.getElementById('progress-pct');
+let currentPage = 0;
+
+function showPage(idx, tabEl) {
+  pages.forEach(p => p.classList.remove('active'));
+  tabs.forEach(t => t.classList.remove('active'));
+  pages[idx].classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  currentPage = idx;
+  const pct = Math.round(((idx + 1) / pages.length) * 100);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = 'שלב ' + (idx + 1) + ' מתוך ' + pages.length;
+  progressPct.textContent = pct + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function checkQuiz(btn, isCorrect, feedback) {
+  const container = btn.parentElement;
+  const allBtns = container.querySelectorAll('.quiz-opt');
+  allBtns.forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fbEl = container.parentElement.querySelector('.quiz-feedback');
+  if (fbEl) {
+    fbEl.textContent = feedback;
+    fbEl.className = 'quiz-feedback ' + (isCorrect ? 'ok' : 'no');
+  }
+}
+
+function copyCode(btn, id) {
+  const pre = document.getElementById(id);
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ הועתק!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'העתק';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    btn.textContent = 'שגיאה';
+  });
+}
+</script>
+</body>
+</html>
